@@ -41,3 +41,10 @@ services:
       $kernel: "@kernel"
       $basePath: "%shinage.player.local.base_path%"
       $presentationLoader: "@shinage.player.local_presentation_loader"
+
+  shinage.player.commands.screenshot.upload:
+    class: mztx\ShinagePlayerBundle\Command\UploadScreenshotCommand
+    arguments:
+      $urlBuilder: "@shinage.player.url_builder"
+      $screenId: "%shinage.player.uuid%"
+    tags: [ console.command ]
