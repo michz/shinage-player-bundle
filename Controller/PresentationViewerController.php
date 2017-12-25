@@ -4,30 +4,32 @@ namespace mztx\ShinagePlayerBundle\Controller;
 use mztx\ShinagePlayerBundle\Entity\CurrentPresentation;
 use mztx\ShinagePlayerBundle\Service\LocalPresentationLoader;
 use mztx\ShinagePlayerBundle\Service\LocalScheduler;
+use mztx\ShinagePlayerBundle\Service\UrlBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PresentationViewerController extends Controller
 {
 
-    public function currentAction()
+    public function currentAction(Request $request)
     {
         /** @var LocalScheduler $scheduler */
-        $scheduler = $this->container->get('shinage.player.local_scheduler');
+        $scheduler = $this->get('shinage.player.local_scheduler');
         /** @var CurrentPresentation $current */
         $current = $scheduler->getCurrentPresentation();
-        return new Response(json_encode($current));
+
+        return $this->returnJsonp($current, $request);
     }
 
-    public function splashAction()
+    public function splashAction(Request $request)
     {
         $slide1 = new \stdClass();
         $slide1->type = 'Image';
         $slide1->title = 'Shinage';
         $slide1->duration = 0;
         $slide1->transition = 'none';
-        $slide1->src = 'http://localhost/assets/img/logo-base-dark.png';
+        $slide1->src = $request->getSchemeAndHttpHost().'/assets/img/logo-base-dark.png';
 
         $presentation = new \stdClass();
         $presentation->slides = [
@@ -36,18 +38,18 @@ class PresentationViewerController extends Controller
         $presentation->settings = new \stdClass();
         $presentation->settings->backgroundColor = '#000';
 
-        return new Response(json_encode($presentation));
+        return $this->returnJsonp($presentation, $request);
     }
 
-    public function localAction($name)
+    public function localAction(Request $request, $name)
     {
         /** @var LocalPresentationLoader $loader */
         $loader = $this->get('shinage.player.local_presentation_loader');
         $presentation = $loader->getByName($name);
-        return new Response(json_encode($presentation));
+        return $this->returnJsonp($presentation, $request);
     }
 
-    public function localFileAction($presentation, $file)
+    public function localFileAction(Request $request, $presentation, $file)
     {
         /** @var LocalPresentationLoader $loader */
         $loader = $this->get('shinage.player.local_presentation_loader');
@@ -57,7 +59,14 @@ class PresentationViewerController extends Controller
         return new Response($data, 200, ['Content-type' => $mime]);
     }
 
-    public function testAction()
+    public function remoteAction(Request $request, $id)
+    {
+        $presentation = $this->get('shinage.player.remote')->getPresentation($id);
+        return new Response($presentation);
+    }
+
+
+    public function testAction(Request $request)
     {
         $slide1 = new \stdClass();
         $slide1->type = 'Image';
@@ -88,13 +97,27 @@ class PresentationViewerController extends Controller
         $slide4->src = 'https://www.w3schools.com/html/mov_bbb.mp4';
         // EXAMPLE VIDEO: Video courtesy of (https://www.bigbuckbunny.org/) (Big Buck Bunny)
 
+        $slide5 = new \stdClass();
+        $slide5->type = 'Web';
+        $slide5->title = 'Test-Slide 5';
+        $slide5->duration = 10000;
+        $slide5->transition = 'none';
+        $slide5->src = 'http://www.mztx.de/';
+        // EXAMPLE VIDEO: Video courtesy of (https://www.bigbuckbunny.org/) (Big Buck Bunny)
+
         $presentation = new \stdClass();
         $presentation->slides = [
-            $slide1, $slide2, $slide3, $slide4
+            $slide1, $slide2, $slide3, /*$slide4*/ $slide5
         ];
         $presentation->settings = new \stdClass();
         $presentation->settings->backgroundColor = '#000';
 
-        return new Response(json_encode($presentation));
+        return $this->returnJsonp($presentation, $request);
+    }
+
+    protected function returnJsonp($obj, Request $request)
+    {
+        $callback = $request->get('callback');
+        return new Response($callback.'('.json_encode($obj).")\n");
     }
 }
