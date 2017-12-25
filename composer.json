@@ -31,7 +31,6 @@
   "autoload": {
     "psr-4": {
       "mztx\\ShinagePlayerBundle\\": "./"
-    },
-    "classmap": [ "app/AppKernel.php" ]
+    }
   }
 }
