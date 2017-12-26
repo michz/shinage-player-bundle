@@ -8,7 +8,7 @@ function PresentationLoader() {
     this.recheckTimeout = 60000;
 
     this.check = function() {
-        $.ajax('/current', {
+        $.ajax(window.currentUrl, {
             method: 'get',
             dataType: 'jsonp',
             success: $.proxy(function(data) {
