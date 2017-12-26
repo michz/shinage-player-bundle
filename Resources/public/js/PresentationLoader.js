@@ -8,8 +8,16 @@ function PresentationLoader() {
     this.recheckTimeout = 60000;
 
     this.check = function() {
+        var headers = {};
+        if (window.previewMode > 0) {
+            headers['X-PREVIEW'] = '1';
+        }
+        if (window.screenGuid.length > 0) {
+            headers['X-SCREEN'] = window.screenGuid;
+        }
         $.ajax(window.currentUrl, {
             method: 'get',
+            headers: headers,
             dataType: 'jsonp',
             success: $.proxy(function(data) {
                 if (data.lastModified == undefined || data.url == undefined) {

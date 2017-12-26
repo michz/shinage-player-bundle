@@ -14,6 +14,8 @@
     <script src="%%base_url%%/bundles/shinageplayer/js/lib/jquery-3.2.1.js"></script>
     <script src="%%base_url%%/bundles/shinageplayer/dist/js/shp.min.js"></script>
     <script>
+        window.screenGuid = '%%screen_guid%%';
+        window.previewMode = %%preview_mode%%;
         window.currentUrl = '%%current_url%%';
         keyboardHandler = new Keyboard(null, {});
         presentationLoader = new PresentationLoader();

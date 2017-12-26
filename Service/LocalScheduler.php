@@ -4,18 +4,22 @@ namespace mztx\ShinagePlayerBundle\Service;
 
 use mztx\ShinagePlayerBundle\Entity\CurrentPresentation;
 use mztx\ShinagePlayerBundle\Entity\HeartbeatAnswer;
+use Symfony\Component\Routing\RouterInterface;
 
 class LocalScheduler
 {
 
     /** @var LocalPresentationProvider */
-    protected $localProvider;
+    private $localProvider;
 
     /** @var Heartbeat */
-    protected $heartbeat;
+    private $heartbeat;
 
     /** @var Remote */
-    protected $remote;
+    private $remote;
+
+    /** @var RouterInterface */
+    private $router;
 
     /** @var bool */
     protected $enabledLocal = true;
@@ -27,11 +31,16 @@ class LocalScheduler
      * @param LocalPresentationProvider $localProvider
      * @param Heartbeat $heartbeat
      */
-    public function __construct(LocalPresentationProvider $localProvider, Heartbeat $heartbeat, Remote $remote)
-    {
+    public function __construct(
+        LocalPresentationProvider $localProvider,
+        Heartbeat $heartbeat,
+        Remote $remote,
+        RouterInterface $router
+    ) {
         $this->localProvider = $localProvider;
         $this->heartbeat = $heartbeat;
         $this->remote = $remote;
+        $this->router = $router;
     }
 
     /**
@@ -58,7 +67,9 @@ class LocalScheduler
                 // Show remote presentation.
                 $current = new CurrentPresentation();
                 $current->lastModified = $heartbeatAnswer->last_modified;
-                $current->url = '/p/remote/'.$heartbeatAnswer->presentation;
+                $current->url = $this->router->generate(
+                    'shinage.player.presentation.remote', ['id' => $heartbeatAnswer->presentation]
+                );
                 return $current;
             }
         } catch (\Exception $ex) {
@@ -68,7 +79,7 @@ class LocalScheduler
         // No presentation found. Show splash.
         $current = new CurrentPresentation();
         $current->lastModified = 123;
-        $current->url = '/p/splash';
+        $current->url = $this->router->generate('shinage.player.splash');
 
         return $current;
     }

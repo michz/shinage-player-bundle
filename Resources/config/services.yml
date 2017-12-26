@@ -28,6 +28,7 @@ services:
       $localProvider: "@shinage.player.local_presentation_provider"
       $heartbeat: "@shinage.player.remote.heartbeat"
       $remote: "@shinage.player.remote"
+      $router: "@router"
 
   shinage.player.local_presentation_loader:
     class: mztx\ShinagePlayerBundle\Service\LocalPresentationLoader
