@@ -15,8 +15,8 @@ class IndexController extends Controller
         #$guidCreator = $this->get('shinage.player.guid_creator');
         #var_dump($guidCreator); exit;
 
-        $rootDir = $this->get('kernel')->getRootDir() . '/../web/player.html';
-        $appContent = file_get_contents($rootDir);
+        $playerHtml = __DIR__ . '/../Resources/public/player.html';
+        $appContent = file_get_contents($playerHtml);
         return new Response($appContent);
     }
 }
