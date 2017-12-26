@@ -15,6 +15,7 @@
 # Backup entities generated with doctrine:generate:entities command
 **/Entity/*~
 
+node_modules/
 
 .idea/
 *.swp
