@@ -10,6 +10,7 @@ function PresentationLoader() {
     this.check = function() {
         $.ajax(window.currentUrl, {
             method: 'get',
+            headers: getAjaxHeaders(),
             dataType: 'jsonp',
             success: $.proxy(function(data) {
                 if (data.lastModified == undefined || data.url == undefined) {
@@ -31,6 +32,7 @@ function PresentationLoader() {
     this.load = function(url) {
         $.ajax(url, {
             method: 'get',
+            headers: getAjaxHeaders(),
             dataType: 'jsonp',
             success: $.proxy(function(data) {
                 this.clear();
@@ -48,4 +50,15 @@ function PresentationLoader() {
     this.clear = function () {
         $('#canvas').empty();
     }
+}
+
+function getAjaxHeaders() {
+    var headers = {};
+    if (window.previewMode > 0) {
+        headers['X-PREVIEW'] = '1';
+    }
+    if (window.screenGuid.length > 0) {
+        headers['X-SCREEN'] = window.screenGuid;
+    }
+    return headers;
 }

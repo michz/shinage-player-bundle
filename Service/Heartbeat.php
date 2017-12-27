@@ -13,32 +13,35 @@ class Heartbeat
     /** @var UrlBuilder */
     protected $urlBuilder;
 
-    /** @var string */
-    protected $uuid;
+    /** @var RuntimeConfiguration */
+    protected $runtimeConfiguration;
 
     /**
      * Heartbeat constructor.
      *
      * @param UrlBuilder $urlBuilder
-     * @param string     $uuid
+     * @param RuntimeConfiguration $runtimeConfiguration
      */
-    public function __construct(UrlBuilder $urlBuilder, $uuid)
+    public function __construct(UrlBuilder $urlBuilder, RuntimeConfiguration $runtimeConfiguration)
     {
         $this->urlBuilder = $urlBuilder;
-        $this->uuid = $uuid;
+        $this->runtimeConfiguration = $runtimeConfiguration;
     }
 
 
     public function beat()
     {
-        $url = $this->urlBuilder->getControllerUrl('heartbeat', $this->uuid);
+        $url = $this->urlBuilder->getControllerUrl('heartbeat', $this->runtimeConfiguration->getScreenGuid());
 
         try {
             $client = new \GuzzleHttp\Client(['connect_timeout' => 5]);
-            $res = $client->request('GET', $url);
+            $headers = [];
+            if ($this->runtimeConfiguration->isPreviewMode()) {
+                $headers['X-PREVIEW'] = '1';
+            }
+            $res = $client->request('GET', $url, ['headers' => $headers]);
 
             $answerJson = $res->getBody()->getContents();
-            #$answerObject = \GuzzleHttp\json_decode($answerJson);
 
             $encoders = array(new JsonEncoder());
             $normalizers = array(new ObjectNormalizer());

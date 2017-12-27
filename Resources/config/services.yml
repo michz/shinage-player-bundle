@@ -13,13 +13,13 @@ services:
   shinage.player.remote:
     class: mztx\ShinagePlayerBundle\Service\Remote
     arguments:
-      $uuid: "%shinage.player.uuid%"
+      $runtimeConfiguration: '@shinage.player.runtime_configuration'
       $urlBuilder: "@shinage.player.url_builder"
 
   shinage.player.remote.heartbeat:
     class: mztx\ShinagePlayerBundle\Service\Heartbeat
     arguments:
-      $uuid: "%shinage.player.uuid%"
+      $runtimeConfiguration: '@shinage.player.runtime_configuration'
       $urlBuilder: "@shinage.player.url_builder"
 
   shinage.player.local_scheduler:
@@ -28,6 +28,7 @@ services:
       $localProvider: "@shinage.player.local_presentation_provider"
       $heartbeat: "@shinage.player.remote.heartbeat"
       $remote: "@shinage.player.remote"
+      $router: "@router"
 
   shinage.player.local_presentation_loader:
     class: mztx\ShinagePlayerBundle\Service\LocalPresentationLoader
@@ -46,5 +47,18 @@ services:
     class: mztx\ShinagePlayerBundle\Command\UploadScreenshotCommand
     arguments:
       $urlBuilder: "@shinage.player.url_builder"
-      $screenId: "%shinage.player.uuid%"
+      $runtimeConfiguration: '@shinage.player.runtime_configuration'
     tags: [ console.command ]
+
+  shinage.player.runtime_configuration:
+    class: mztx\ShinagePlayerBundle\Service\RuntimeConfiguration
+    arguments:
+      $screenGuid: "%shinage.player.uuid%"
+      $previewMode: false
+
+  shinage.player.events.kernel.controller:
+    class: mztx\ShinagePlayerBundle\Events\KernelEventHandler
+    arguments:
+      $runtimeConfiguration: '@shinage.player.runtime_configuration'
+    tags:
+      - { name: kernel.event_listener, event: kernel.controller }

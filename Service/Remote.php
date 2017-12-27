@@ -14,19 +14,19 @@ class Remote
     /** @var UrlBuilder */
     protected $urlBuilder;
 
-    /** @var string */
-    protected $uuid;
+    /** @var RuntimeConfiguration */
+    protected $runtimeConfiguration;
 
     /**
      * Remote constructor.
      *
-     * @param UrlBuilder $urlBuilder
-     * @param string     $uuid
+     * @param UrlBuilder           $urlBuilder
+     * @param RuntimeConfiguration $runtimeConfiguration
      */
-    public function __construct(UrlBuilder $urlBuilder, $uuid)
+    public function __construct(UrlBuilder $urlBuilder, RuntimeConfiguration $runtimeConfiguration)
     {
         $this->urlBuilder = $urlBuilder;
-        $this->uuid = $uuid;
+        $this->runtimeConfiguration = $runtimeConfiguration;
     }
 
     public function getPresentation($id)
