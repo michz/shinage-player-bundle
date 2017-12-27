@@ -29,7 +29,7 @@ class PresentationViewerController extends Controller
         $slide1->title = 'Shinage';
         $slide1->duration = 0;
         $slide1->transition = 'none';
-        $slide1->src = $request->getSchemeAndHttpHost().'/assets/img/logo-base-dark.png';
+        $slide1->src = $request->getSchemeAndHttpHost().$request->getBasePath().'/bundles/shinageplayer/img/logo-base-dark.png';
 
         $presentation = new \stdClass();
         $presentation->slides = [
