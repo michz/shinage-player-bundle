@@ -9,6 +9,7 @@
 namespace mztx\ShinagePlayerBundle\Command;
 
 use GuzzleHttp\Client;
+use mztx\ShinagePlayerBundle\Service\RuntimeConfiguration;
 use mztx\ShinagePlayerBundle\Service\UrlBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,18 +21,18 @@ class UploadScreenshotCommand extends Command
     /** @var UrlBuilder */
     private $urlBuilder;
 
-    /** @var string */
-    private $screenId;
+    /** @var RuntimeConfiguration */
+    private $runtimeConfiguration;
 
     /**
      * UploadScreenshopCommand constructor.
-     * @param UrlBuilder $urlBuilder
-     * @param string     $screenId
+     * @param UrlBuilder           $urlBuilder
+     * @param RuntimeConfiguration $runtimeConfiguration
      */
-    public function __construct(UrlBuilder $urlBuilder, $screenId)
+    public function __construct(UrlBuilder $urlBuilder, RuntimeConfiguration $runtimeConfiguration)
     {
         $this->urlBuilder = $urlBuilder;
-        $this->screenId = $screenId;
+        $this->runtimeConfiguration = $runtimeConfiguration;
         parent::__construct();
     }
 
@@ -58,12 +59,10 @@ class UploadScreenshotCommand extends Command
                     ],
                     [
                         'name'     => 'screen',
-                        'contents' => $this->screenId
+                        'contents' => $this->runtimeConfiguration->getScreenGuid()
                     ]
                 ],
             ]);
         return 0;
     }
-
-
 }
