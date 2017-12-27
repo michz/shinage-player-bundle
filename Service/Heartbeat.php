@@ -35,7 +35,11 @@ class Heartbeat
 
         try {
             $client = new \GuzzleHttp\Client(['connect_timeout' => 5]);
-            $res = $client->request('GET', $url);
+            $headers = [];
+            if ($this->runtimeConfiguration->isPreviewMode()) {
+                $headers['X-PREVIEW'] = '1';
+            }
+            $res = $client->request('GET', $url, ['headers' => $headers]);
 
             $answerJson = $res->getBody()->getContents();
 
